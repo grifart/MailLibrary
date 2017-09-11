@@ -248,6 +248,16 @@ class Mail {
 		$this->connection->getDriver()->deleteMail($this->id);
 	}
 
+	public function saveToEml($file)
+	{
+		$this->connection->getDriver()->saveMail($this->id, $file);
+	}
+
+	public function getHeaderInfo()
+	{
+		return $this->connection->getDriver()->getHeaderInfo($this->id);
+	}
+
 	/**
 	 * Initializes headers
 	 */

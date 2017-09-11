@@ -487,4 +487,40 @@ class ImapDriver implements IDriver
 		return mb_convert_encoding($name, 'UTF7-IMAP', 'UTF-8');
 	}
 
+	/**
+	 * Save mail content as eml to given file
+	 * @param int $mailId
+	 * @param $file
+	 * @throws DriverException
+	 */
+	public function saveMail($mailId, $file)
+	{
+		if(!imap_savebody($this->resource, $file, $mailId, '' , FT_UID)) {
+			throw new DriverException("Cannot save mail: ".imap_last_error());
+		}
+	}
+
+	public function getHeaderInfo($mailId)
+	{
+		$messageUID = imap_msgno($this->resource, $mailId);
+
+		if(!$messageUID) {
+			throw new DriverException("Cannot get message UID: ".imap_last_error());
+		}
+
+		$headers = imap_headerinfo($this->resource, $messageUID);
+
+		if(!$headers) {
+			throw new DriverException("Cannot get header info: ".imap_last_error());
+		}
+		return $headers;
+	}
+
+	public function uploadMail($content)
+	{
+		if(!imap_append($this->resource, $this->server, $content)) {
+			throw new DriverException("Cannot upload mail: ".imap_last_error());
+		}
+
+	}
 }
