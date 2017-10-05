@@ -104,7 +104,7 @@ class ImapDriver implements IDriver
 			throw new DriverException("Cannot get mailboxes from server: " . imap_last_error());
 		}
 		foreach($foo as $mailbox) {
-			$mailboxes[] = mb_convert_encoding(str_replace($this->server, '', $mailbox), 'UTF8', 'UTF7-IMAP');
+			$mailboxes[] = mb_convert_encoding($mailbox, 'UTF8', 'UTF7-IMAP');
 		}
 		return $mailboxes;
 	}
@@ -117,7 +117,7 @@ class ImapDriver implements IDriver
 	 */
 	public function createMailbox($name)
 	{
-		if(!imap_createmailbox($this->resource, $this->server . $name)) {
+		if(!imap_createmailbox($this->resource, $this->encodeMailboxName($name))) {
 			throw new DriverException("Cannot create mailbox '$name': " . imap_last_error());
 		}
 	}
@@ -131,7 +131,7 @@ class ImapDriver implements IDriver
 	 */
 	public function renameMailbox($from, $to)
 	{
-		if(!imap_renamemailbox($this->resource, $this->server . $from, $this->server . $to)) {
+		if(!imap_renamemailbox($this->resource, $this->encodeMailboxName($from), $this->encodeMailboxName($to))) {
 			throw new DriverException("Cannot rename mailbox from '$from' to '$to': " . imap_last_error());
 		}
 	}
@@ -144,7 +144,7 @@ class ImapDriver implements IDriver
 	 */
 	public function deleteMailbox($name)
 	{
-		if(!imap_deletemailbox($this->resource, $this->server . $name)) {
+		if(!imap_deletemailbox($this->resource, $this->encodeMailboxName($name))) {
 			throw new DriverException("Cannot delete mailbox '$name': " . imap_last_error());
 		}
 	}
@@ -159,7 +159,7 @@ class ImapDriver implements IDriver
 	{
 		if($name !== $this->currentMailbox) {
 			$this->flush();
-			if(!imap_reopen($this->resource, $this->server . $name)) {
+			if(!imap_reopen($this->resource, $this->encodeMailboxName($name))) {
 				throw new DriverException("Cannot switch to mailbox '$name': " . imap_last_error());
 			}
 			$this->currentMailbox = $name;
@@ -402,7 +402,7 @@ class ImapDriver implements IDriver
 	 * @throws DriverException
 	 */
 	public function copyMail($mailId, $toMailbox) {
-		if(!imap_mail_copy($this->resource, $mailId, $this->server . $this->encodeMailboxName($toMailbox), CP_UID)) {
+		if(!imap_mail_copy($this->resource, $mailId, $this->encodeMailboxName($toMailbox), CP_UID)) {
 			throw new DriverException("Cannot copy mail to mailbox '$toMailbox': ".imap_last_error());
 		}
 	}
@@ -414,7 +414,7 @@ class ImapDriver implements IDriver
 	 * @throws DriverException
 	 */
 	public function moveMail($mailId, $toMailbox) {
-		if(!imap_mail_move($this->resource, $mailId, $this->server . $this->encodeMailboxName($toMailbox), CP_UID)) {
+		if(!imap_mail_move($this->resource, $mailId, $this->encodeMailboxName($toMailbox), CP_UID)) {
 			throw new DriverException("Cannot copy mail to mailbox '$toMailbox': ".imap_last_error());
 		}
 	}
