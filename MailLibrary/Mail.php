@@ -251,7 +251,23 @@ class Mail {
 	public function saveToEml($file)
 	{
 		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
-		$this->connection->getDriver()->saveMail($this->id, $file);
+		if(\file_put_contents($file, $this->connection->getDriver()->retrieveRawMessage($this->id)) === FALSE) {
+			throw new MailException('Cannot save you e-mail to disk. I/O error occurred');
+		}
+	}
+
+	/**
+	 * Returns raw message content. This can be saved as eml file.
+	 *
+	 * @see \greeny\MailLibrary\Mailbox::uploadRawMessage() is inverse method
+	 *
+	 * @return string the raw message content
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function getRawContent()
+	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
+		return $this->connection->getDriver()->retrieveRawMessage($this->id);
 	}
 
 	public function getHeaderInfo()

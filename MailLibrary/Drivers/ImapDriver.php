@@ -489,15 +489,44 @@ class ImapDriver implements IDriver
 
 	/**
 	 * Save mail content as eml to given file
-	 * @param int $mailId
-	 * @param $file
+	 * @param int $messageUID
 	 * @throws DriverException
+	 * @return string the mail content
 	 */
-	public function saveMail($mailId, $file)
+	public function retrieveRawMessage($messageUID)
 	{
-		if(!imap_savebody($this->resource, $file, $mailId, '' , FT_UID)) {
-			throw new DriverException("Cannot save mail: ".imap_last_error());
+		$fp = fopen('php://temp', 'w+b');
+		if($fp === FALSE) {
+			throw new DriverException('Cannot open temporary file');
 		}
+		try {
+			if(!imap_savebody($this->resource, $fp, $messageUID, '' , FT_UID | FT_PEEK)) {
+				throw new DriverException("Cannot save mail: ".imap_last_error());
+			}
+
+			fseek($fp, 0, SEEK_SET);
+			$messageContent = \stream_get_contents($fp, -1, 0);
+			if($messageContent === FALSE) {
+				throw new DriverException('Cannot read message body, reading from stram failed.');
+			}
+			return $messageContent;
+
+		} finally {
+			fclose($fp);
+		}
+	}
+
+	/**
+	 * @param string $contentOfMessage
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function uploadRawMessage($contentOfMessage)
+	{
+		$options = []; // todo: add support for options
+		if(!imap_append($this->resource, $this->server, $contentOfMessage, $options)) {
+			throw new DriverException("Cannot upload mail: ".imap_last_error());
+		}
+
 	}
 
 	public function getHeaderInfo($mailId)
@@ -514,13 +543,5 @@ class ImapDriver implements IDriver
 			throw new DriverException("Cannot get header info: ".imap_last_error());
 		}
 		return $headers;
-	}
-
-	public function uploadMail($content)
-	{
-		if(!imap_append($this->resource, $this->server, $content)) {
-			throw new DriverException("Cannot upload mail: ".imap_last_error());
-		}
-
 	}
 }

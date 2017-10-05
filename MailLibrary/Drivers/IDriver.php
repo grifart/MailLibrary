@@ -136,21 +136,28 @@ interface IDriver {
 
 
 	/**
-	 * Save mail content as eml to given file
-	 * @param int $mailId
-	 * @param $file
-	 * @throws DriverException
-	 */
-	function saveMail($mailId, $file);
-
-	function getHeaderInfo($mailId);
-
-	/**
 	 * Deletes mail
 	 * @param int $mailId
 	 * @throws DriverException
 	 */
 	function deleteMail($mailId);
 
-	function uploadMail($content);
+	/**
+	 * Save mail content as eml to given file
+	 * @param int $messageUID
+	 * @param $toFile
+	 * @return string the raw message content
+	 * @throws DriverException
+	 */
+	function retrieveRawMessage($messageUID);
+
+	/**
+	 * Upload given raw message to current mailbox
+	 * @param string $contentOfMessage
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	function uploadRawMessage($contentOfMessage);
+
+	function getHeaderInfo($mailId);
+
 }
