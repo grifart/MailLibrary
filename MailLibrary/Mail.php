@@ -250,11 +250,13 @@ class Mail {
 
 	public function saveToEml($file)
 	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
 		$this->connection->getDriver()->saveMail($this->id, $file);
 	}
 
 	public function getHeaderInfo()
 	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
 		return $this->connection->getDriver()->getHeaderInfo($this->id);
 	}
 
