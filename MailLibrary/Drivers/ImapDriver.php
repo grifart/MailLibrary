@@ -198,7 +198,7 @@ class ImapDriver implements IDriver
 	 * @throws DriverException
 	 */
 	public function checkFilter($key, $value = NULL) {
-		if(!in_array($key, array_keys(self::$filterTable))) {
+		if(!array_key_exists($key, self::$filterTable)) {
 			throw new DriverException("Invalid filter key '$key'.");
 		}
 		$filtered = self::$filterTable[$key];
