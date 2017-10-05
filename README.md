@@ -3,7 +3,7 @@ MailLibrary
 
 A PHP library for downloading mails from server.
 
-Documentation can be found at http://greeny.github.io/MailLibrary/.
+Documentation can be found at http://php-mail-client.github.io/Client/.
 
 This is fork which differs from original in following:
 - makes [less assumptions](https://github.com/grifart/MailLibrary/commit/daa0d1e16667b124b210ae329f16396117824c01) on server
