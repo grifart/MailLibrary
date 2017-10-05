@@ -31,5 +31,15 @@ class Mailbox {
 	{
 		return new Selection($this->connection, $this);
 	}
+
+
+	/**
+	 * @param string $theMessage
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function uploadRawMessage($theMessage)
+	{
+		$this->connection->getDriver()->switchMailbox($this->name);
+		$this->connection->getDriver()->uploadRawMessage($theMessage);
+	}
 }
- 
