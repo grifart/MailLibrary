@@ -248,6 +248,7 @@ class Mail {
 		$this->connection->getDriver()->deleteMail($this->id);
 	}
 
+	/** @deprecated */
 	public function saveToEml($file)
 	{
 		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
