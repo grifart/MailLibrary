@@ -262,13 +262,6 @@ class Mail {
 		return $this->connection->getDriver()->retrieveRawMessage($this->id);
 	}
 
-	public function getHeaderInfo()
-	{
-		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
-		return $this->connection->getDriver()->retrieveOverview($this->id);
-	}
-
-
 	/**
 	 * Returns message information available when fetching headers-only.
 	 *
