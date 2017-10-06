@@ -9,11 +9,15 @@
         }
     ],
     "autoload": {
-        "files": ["MailLibrary/loader.php"]
+        "files": ["MailLibrary/exceptions.php"],
+        "psr-4": {
+            "greeny\\MailLibrary\\": "MailLibrary"
+        }
     },
     "require": {
         "php": ">= 7.1.0",
         "ext-imap": "*",
+        "ext-intl": "*",
         "nette/utils": "~2.2"
     },
     "require-dev": {
