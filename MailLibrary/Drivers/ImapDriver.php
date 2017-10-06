@@ -487,4 +487,61 @@ class ImapDriver implements IDriver
 		return mb_convert_encoding($name, 'UTF7-IMAP', 'UTF-8');
 	}
 
+	/**
+	 * Save mail content as eml to given file
+	 * @param int $messageUID
+	 * @throws DriverException
+	 * @return string the mail content
+	 */
+	public function retrieveRawMessage($messageUID)
+	{
+		$fp = fopen('php://temp', 'w+b');
+		if($fp === FALSE) {
+			throw new DriverException('Cannot open temporary file');
+		}
+		try {
+			if(!imap_savebody($this->resource, $fp, $messageUID, '' , FT_UID | FT_PEEK)) {
+				throw new DriverException("Cannot save mail: ".imap_last_error());
+			}
+
+			fseek($fp, 0, SEEK_SET);
+			$messageContent = \stream_get_contents($fp, -1, 0);
+			if($messageContent === FALSE) {
+				throw new DriverException('Cannot read message body, reading from stram failed.');
+			}
+			return $messageContent;
+
+		} finally {
+			fclose($fp);
+		}
+	}
+
+	/**
+	 * @param string $contentOfMessage
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function uploadRawMessage($contentOfMessage)
+	{
+		$options = []; // todo: add support for options
+		if(!imap_append($this->resource, $this->server, $contentOfMessage, $options)) {
+			throw new DriverException("Cannot upload mail: ".imap_last_error());
+		}
+
+	}
+
+	public function getHeaderInfo($mailId)
+	{
+		$messageUID = imap_msgno($this->resource, $mailId);
+
+		if(!$messageUID) {
+			throw new DriverException("Cannot get message UID: ".imap_last_error());
+		}
+
+		$headers = imap_headerinfo($this->resource, $messageUID);
+
+		if(!$headers) {
+			throw new DriverException("Cannot get header info: ".imap_last_error());
+		}
+		return $headers;
+	}
 }

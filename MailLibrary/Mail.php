@@ -249,6 +249,26 @@ class Mail {
 	}
 
 	/**
+	 * Returns raw message content. This can be saved as eml file.
+	 *
+	 * @see \greeny\MailLibrary\Mailbox::uploadRawMessage() is inverse method
+	 *
+	 * @return string the raw message content
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function getRawContent()
+	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
+		return $this->connection->getDriver()->retrieveRawMessage($this->id);
+	}
+
+	public function getHeaderInfo()
+	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
+		return $this->connection->getDriver()->getHeaderInfo($this->id);
+	}
+
+	/**
 	 * Initializes headers
 	 */
 	protected function initializeHeaders()

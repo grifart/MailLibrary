@@ -6,6 +6,7 @@
 namespace greeny\MailLibrary;
 
 class Attachment {
+
 	/** @var string */
 	protected $name;
 
@@ -55,4 +56,3 @@ class Attachment {
 		return $this->type;
 	}
 }
- 
