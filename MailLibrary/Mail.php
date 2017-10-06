@@ -248,15 +248,6 @@ class Mail {
 		$this->connection->getDriver()->deleteMail($this->id);
 	}
 
-	/** @deprecated */
-	public function saveToEml($file)
-	{
-		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
-		if(\file_put_contents($file, $this->connection->getDriver()->retrieveRawMessage($this->id)) === FALSE) {
-			throw new MailException('Cannot save you e-mail to disk. I/O error occurred');
-		}
-	}
-
 	/**
 	 * Returns raw message content. This can be saved as eml file.
 	 *
