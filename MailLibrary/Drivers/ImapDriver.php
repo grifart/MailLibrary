@@ -11,6 +11,7 @@ use greeny\MailLibrary\Mailbox;
 use greeny\MailLibrary\MailHeader;
 use greeny\MailLibrary\Structures\IStructure;
 use greeny\MailLibrary\Structures\ImapStructure;
+use greeny\MailLibrary\Tools;
 use Nette\Utils\Strings;
 use greeny\MailLibrary\Mail;
 use DateTime;
@@ -254,18 +255,8 @@ class ImapDriver implements IDriver
 				continue;
 			}
 			if(strtolower($key) === 'subject') {
-				$decoded = imap_mime_header_decode($header);
-
-				$text = '';
-				foreach($decoded as $part) {
-					if($part->charset !== 'UTF-8' && $part->charset !== 'default') {
-						$text .= @mb_convert_encoding($part->text, 'UTF-8', $part->charset); // todo: handle this more properly
-					} else {
-						$text .= $part->text;
-					}
-				}
-
-				$headers[$key] = trim($text);
+				$headers[$key] = Strings::trim(Tools::decodeHeaderContent($header));
+				
 			} else if(in_array(strtolower($key), self::$contactHeaders)) {
 				$contacts = imap_rfc822_parse_adrlist(imap_utf8(trim($header)), 'UNKNOWN_HOST');
 				$list = new ContactList();

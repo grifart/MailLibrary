@@ -118,13 +118,13 @@ final class MailHeader
 	public function __construct(array $fetchedData)
 	{
 		assert(\is_string($fetchedData['subject']));
-		$this->subject = $fetchedData['subject'];
+		$this->subject = Tools::decodeHeaderContent($fetchedData['subject']);
 
 		assert(\is_string($fetchedData['from']));
-		$this->from = $fetchedData['from'];
+		$this->from = Tools::decodeHeaderContent($fetchedData['from']);
 
 		assert(\is_string($fetchedData['to']));
-		$this->to = $fetchedData['to'];
+		$this->to = Tools::decodeHeaderContent($fetchedData['to']);
 
 		// @link https://tools.ietf.org/html/rfc2156#section-3.3.5
 		// However parsing as ISO822 does not always work; so falling back to auto-detection
