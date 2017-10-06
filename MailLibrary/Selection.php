@@ -18,7 +18,7 @@ class Selection implements ArrayAccess, Countable, Iterator {
 	protected $mails = NULL;
 
 	/** @var array */
-	protected $overview= NULL;
+	protected $overview = NULL;
 
 	/** @var int */
 	protected $iterator = NULL;
