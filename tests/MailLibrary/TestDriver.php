@@ -155,7 +155,7 @@ class TestDriver implements IDriver {
 
 	function retrieveOverview(array $mailId): array
 	{
-
+		return [];
 	}
 }
 
