@@ -21,6 +21,6 @@
         "nette/utils": "~2.2"
     },
     "require-dev": {
-        "nette/tester": "@dev"
+        "nette/tester": "^1.7.1"
     }
 }
