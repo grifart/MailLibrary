@@ -148,23 +148,28 @@ final class MailHeader
 		assert(\is_int($fetchedData['msgno']));
 		$this->messageNumber = $fetchedData['msgno'];
 		
-		assert(\in_array($fetchedData['recent'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['recent']));
 		$this->recent = (bool) $fetchedData['recent'];
 
-		assert(\in_array($fetchedData['flagged'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['flagged']));
 		$this->flagged = (bool) $fetchedData['flagged'];
 
-		assert(\in_array($fetchedData['answered'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['answered']));
 		$this->answered = (bool) $fetchedData['answered'];
 
-		assert(\in_array($fetchedData['deleted'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['deleted']));
 		$this->deleted = (bool) $fetchedData['deleted'];
 
-		assert(\in_array($fetchedData['seen'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['seen']));
 		$this->seen = (bool) $fetchedData['seen'];
 
-		assert(\in_array($fetchedData['draft'], [0,1], TRUE));
+		assert(self::isBoolSavedAsInteger($fetchedData['draft']));
 		$this->draft = (bool) $fetchedData['draft'];
+	}
+
+	private static function isBoolSavedAsInteger(int $boolSavedAsInteger): bool
+	{
+		return \in_array($boolSavedAsInteger, [0,1], TRUE);
 	}
 
 
