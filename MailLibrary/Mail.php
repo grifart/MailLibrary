@@ -94,7 +94,7 @@ class Mail {
 	 */
 	public function __get($name)
 	{
-		\trigger_error(\E_USER_DEPRECATED, 'use array access with execat header name instead');
+		\trigger_error('use array access with execat header name instead', \E_USER_DEPRECATED);
 		return $this->getHeader(
 			$this->normalizeHeaderName($this->lowerCamelCaseToHeaderName($name))
 		);
