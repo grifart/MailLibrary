@@ -10,6 +10,7 @@ spl_autoload_register(function ($type) {
 		'greeny\maillibrary\connection' => 'Connection.php',
 		'greeny\maillibrary\mailbox' => 'Mailbox.php',
 		'greeny\maillibrary\selection' => 'Selection.php',
+		'greeny\maillibrary\mailheader' => 'MailHeader.php',
 		'greeny\maillibrary\mail' => 'Mail.php',
 		'greeny\maillibrary\contactlist' => 'ContactList.php',
 		'greeny\maillibrary\contact' => 'Contact.php',

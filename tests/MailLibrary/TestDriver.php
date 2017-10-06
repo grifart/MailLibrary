@@ -140,6 +140,23 @@ class TestDriver implements IDriver {
 	{
 
 	}
+
+	function retrieveRawMessage($messageUID)
+	{
+		return '';
+	}
+
+
+	function uploadRawMessage($contentOfMessage)
+	{
+		// nothing
+	}
+
+
+	function retrieveOverview(array $mailId): array
+	{
+
+	}
 }
 
 class TestStructure implements IStructure {
@@ -168,4 +185,13 @@ class TestStructure implements IStructure {
 	 * @return \greeny\MailLibrary\Attachment[]
 	 */
 	public function getAttachments() {}
+
+
+	/**
+	 * @return \greeny\MailLibrary\MimePart[]
+	 */
+	public function getMimeParts()
+	{
+		return [];
+	}
 }

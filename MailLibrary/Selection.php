@@ -17,6 +17,9 @@ class Selection implements ArrayAccess, Countable, Iterator {
 	/** @var array */
 	protected $mails = NULL;
 
+	/** @var array */
+	protected $overview= NULL;
+
 	/** @var int */
 	protected $iterator = NULL;
 
@@ -149,21 +152,48 @@ class Selection implements ArrayAccess, Countable, Iterator {
 	}
 
 	/**
+	 * @return \greeny\MailLibrary\MailHeader[]
+	 */
+	public function getOverview(): array
+	{
+		$this->overview !== NULL || $this->fetchOverview();
+		return $this->overview;
+	}
+
+	/**
 	 * Fetches mail ids from server
 	 */
 	protected function fetchMails()
 	{
-		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
-		$ids = $this->connection->getDriver()->getMailIds($this->filters, $this->limit, $this->offset, $this->orderBy, $this->orderType);
 		$i = 0;
 		$this->mails = array();
 		$this->iterator = 0;
 		$this->mailIndexes = array();
-		foreach($ids as $id) {
+		foreach($this->fetchUIDs() as $id) {
 			$this->mails[$id] = new Mail($this->connection, $this->mailbox, $id);
 			$this->mailIndexes[$i++] = $id;
 		}
 	}
+
+	/**
+	 * @return array
+	 */
+	private function fetchUIDs()
+	{
+		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
+		$ids = $this->connection->getDriver()
+			->getMailIds($this->filters, $this->limit, $this->offset, $this->orderBy, $this->orderType);
+		return $ids;
+	}
+
+	protected function fetchOverview(): void
+	{
+		$this->overview = [];
+		foreach($this->connection->getDriver()->retrieveOverview($this->fetchUIDs()) as $header) {
+			$this->overview[$header->getMessageId()] = $header;
+		}
+	}
+
 
 	// INTERFACE ArrayAccess
 
@@ -257,4 +287,5 @@ class Selection implements ArrayAccess, Countable, Iterator {
 		$this->mails !== NULL || $this->fetchMails();
 		$this->iterator = 0;
 	}
+
 }

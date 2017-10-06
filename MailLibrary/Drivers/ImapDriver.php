@@ -8,6 +8,7 @@ namespace greeny\MailLibrary\Drivers;
 use greeny\MailLibrary\ContactList;
 use greeny\MailLibrary\DriverException;
 use greeny\MailLibrary\Mailbox;
+use greeny\MailLibrary\MailHeader;
 use greeny\MailLibrary\Structures\IStructure;
 use greeny\MailLibrary\Structures\ImapStructure;
 use Nette\Utils\Strings;
@@ -529,18 +530,14 @@ class ImapDriver implements IDriver
 
 	}
 
-	public function getHeaderInfo($mailId)
+
+	public function retrieveOverview(array $mailUIDs): array
 	{
-		$messageUID = imap_msgno($this->resource, $mailId);
-
-		if(!$messageUID) {
-			throw new DriverException("Cannot get message UID: ".imap_last_error());
-		}
-
-		$headers = imap_headerinfo($this->resource, $messageUID);
-
-		if(!$headers) {
-			throw new DriverException("Cannot get header info: ".imap_last_error());
+		$headers = [];
+		$headerList = imap_fetch_overview( $this->resource, \implode(',', $mailUIDs), \FT_UID);
+		foreach($headerList as $header) {
+			// todo: parse UTF-8 for subject, from, to, etc... currently returns encoded RAW value
+			$headers[] = new MailHeader((array) $header);
 		}
 		return $headers;
 	}

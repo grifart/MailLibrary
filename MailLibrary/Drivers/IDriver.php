@@ -158,6 +158,11 @@ interface IDriver {
 	 */
 	function uploadRawMessage($contentOfMessage);
 
-	function getHeaderInfo($mailId);
+
+	/**
+	 * @param array $mailUIDs
+	 * @return \greeny\MailLibrary\MailHeader[]
+	 */
+	function retrieveOverview(array $mailUIDs): array;
 
 }
