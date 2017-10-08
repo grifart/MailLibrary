@@ -94,13 +94,14 @@ class Mail {
 	 */
 	public function __get($name)
 	{
-		\trigger_error('use array access with execat header name instead', \E_USER_DEPRECATED);
+		\trigger_error('Use ->getHeader() instead.', \E_USER_DEPRECATED);
 		return $this->getHeader(
 			$this->normalizeHeaderName($this->lowerCamelCaseToHeaderName($name))
 		);
 	}
 
-	public function __set($name, $value) {
+	public function __set($name, $value)
+	{
 		throw new \Exception('Mail headers are read-only.');
 	}
 
