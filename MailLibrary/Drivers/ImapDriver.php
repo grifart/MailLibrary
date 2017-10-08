@@ -515,8 +515,8 @@ class ImapDriver implements IDriver
 	public function uploadRawMessage($contentOfMessage)
 	{
 		$options = NULL; // todo: add support for options
-		if(!imap_append($this->resource, $this->server, $contentOfMessage, $options)) {
-			throw new DriverException("Cannot upload mail: ".imap_last_error());
+		if(!imap_append($this->resource, $this->currentMailbox, $contentOfMessage, $options)) {
+			throw new DriverException('Cannot upload mail: ' .imap_last_error());
 		}
 
 	}
