@@ -94,13 +94,14 @@ class Mail {
 	 */
 	public function __get($name)
 	{
-		\trigger_error(\E_USER_DEPRECATED, 'use array access with execat header name instead');
+		\trigger_error('Use ->getHeader() instead.', \E_USER_DEPRECATED);
 		return $this->getHeader(
 			$this->normalizeHeaderName($this->lowerCamelCaseToHeaderName($name))
 		);
 	}
 
-	public function __set($name, $value) {
+	public function __set($name, $value)
+	{
 		throw new \Exception('Mail headers are read-only.');
 	}
 
@@ -249,7 +250,7 @@ class Mail {
 	}
 
 	/**
-	 * Returns raw message content. This can be saved as eml file.
+	 * Returns raw message content. This can be saved as an .eml file.
 	 *
 	 * @see \greeny\MailLibrary\Mailbox::uploadRawMessage() is inverse method
 	 *
@@ -262,10 +263,20 @@ class Mail {
 		return $this->connection->getDriver()->retrieveRawMessage($this->id);
 	}
 
-	public function getHeaderInfo()
+	/**
+	 * Returns message information available when fetching headers-only.
+	 *
+	 * This is the same overview as when using {@see Selection::getOverview()}
+	 *
+	 * @return \greeny\MailLibrary\MailHeader
+	 * @throws \greeny\MailLibrary\DriverException
+	 */
+	public function getMessageHeader(): MailHeader
 	{
 		$this->connection->getDriver()->switchMailbox($this->mailbox->getName());
-		return $this->connection->getDriver()->getHeaderInfo($this->id);
+		$overview = $this->connection->getDriver()->retrieveOverview([$this->id]);
+		assert(count($overview) === 1);
+		return \reset($overview);
 	}
 
 	/**

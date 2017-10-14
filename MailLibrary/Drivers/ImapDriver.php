@@ -8,8 +8,10 @@ namespace greeny\MailLibrary\Drivers;
 use greeny\MailLibrary\ContactList;
 use greeny\MailLibrary\DriverException;
 use greeny\MailLibrary\Mailbox;
+use greeny\MailLibrary\MailHeader;
 use greeny\MailLibrary\Structures\IStructure;
 use greeny\MailLibrary\Structures\ImapStructure;
+use greeny\MailLibrary\Tools;
 use Nette\Utils\Strings;
 use greeny\MailLibrary\Mail;
 use DateTime;
@@ -253,18 +255,8 @@ class ImapDriver implements IDriver
 				continue;
 			}
 			if(strtolower($key) === 'subject') {
-				$decoded = imap_mime_header_decode($header);
-
-				$text = '';
-				foreach($decoded as $part) {
-					if($part->charset !== 'UTF-8' && $part->charset !== 'default') {
-						$text .= @mb_convert_encoding($part->text, 'UTF-8', $part->charset); // todo: handle this more properly
-					} else {
-						$text .= $part->text;
-					}
-				}
-
-				$headers[$key] = trim($text);
+				$headers[$key] = Strings::trim(Tools::decodeHeaderContent($header));
+				
 			} else if(in_array(strtolower($key), self::$contactHeaders)) {
 				$contacts = imap_rfc822_parse_adrlist(imap_utf8(trim($header)), 'UNKNOWN_HOST');
 				$list = new ContactList();
@@ -522,25 +514,21 @@ class ImapDriver implements IDriver
 	 */
 	public function uploadRawMessage($contentOfMessage)
 	{
-		$options = []; // todo: add support for options
-		if(!imap_append($this->resource, $this->server, $contentOfMessage, $options)) {
-			throw new DriverException("Cannot upload mail: ".imap_last_error());
+		$options = NULL; // todo: add support for options
+		if(!imap_append($this->resource, $this->currentMailbox, $contentOfMessage, $options)) {
+			throw new DriverException('Cannot upload mail: ' .imap_last_error());
 		}
 
 	}
 
-	public function getHeaderInfo($mailId)
+
+	public function retrieveOverview(array $mailUIDs): array
 	{
-		$messageUID = imap_msgno($this->resource, $mailId);
-
-		if(!$messageUID) {
-			throw new DriverException("Cannot get message UID: ".imap_last_error());
-		}
-
-		$headers = imap_headerinfo($this->resource, $messageUID);
-
-		if(!$headers) {
-			throw new DriverException("Cannot get header info: ".imap_last_error());
+		$headers = [];
+		$headerList = imap_fetch_overview( $this->resource, \implode(',', $mailUIDs), \FT_UID);
+		foreach($headerList as $header) {
+			// todo: parse UTF-8 for subject, from, to, etc... currently returns encoded RAW value
+			$headers[] = new MailHeader((array) $header);
 		}
 		return $headers;
 	}
